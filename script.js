@@ -5,6 +5,9 @@ require("dotenv").config();
 const port = process.env.PORT || 3001;
 const mongoose = require("mongoose");
 const Users = require("./models/Users");
+const Categories = require("./models/Categories");
+const Products = require("./models/Products");
+const Reviews = require("./models/Reviews");
 
 //middleware
 app.use(cors());
@@ -15,14 +18,20 @@ mongoose.connect(
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jgk3xtt.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
 );
 
-app.get("/", (req, res) => {
-  res.status(404).send({ error: true, message: "access denied" });
+app.get("/", async (req, res) => {
+  const result = await Users.create({
+    name: "SAKA",
+    email: "SAKA@GMAIL.COM",
+    imageUrl: "sakaimage",
+    created_at: new Date(),
+    reviewDone: [],
+  });
+  res.send(result);
 });
 
 app.listen(port, () => {
   console.log("listening", port);
 });
-
 
 //sample
 /* app.get("/create", async (req, res) => {

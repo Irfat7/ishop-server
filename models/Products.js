@@ -10,7 +10,7 @@ const productsSchema = mongoose.Schema({
   },
   imageUrl: [String],
   quantity: Number,
-  created_at: Date,
+  createdAt: Date,
 });
 
 module.exports = mongoose.model(refs.Products, productsSchema)

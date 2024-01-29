@@ -5,7 +5,7 @@ const usersSchema = new mongoose.Schema({
   name: String,
   email: String,
   imageUrl: String,
-  created_at: Date,
+  createdAt: Date,
   reviewDone: [
     {
       type: mongoose.Schema.Types.ObjectId,
