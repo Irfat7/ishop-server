@@ -18,32 +18,41 @@ mongoose.connect(
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jgk3xtt.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
 );
 
-app.get("/", async (req, res) => {
-  const result = await Users.create({
-    name: "SAKA",
-    email: "SAKA@GMAIL.COM",
-    imageUrl: "sakaimage",
-    created_at: new Date(),
-    reviewDone: [],
-  });
-  res.send(result);
+//users-api
+//all-users
+app.get("/users", async (req, res) => {
+  try {
+    const results = await Users.find();
+
+    res.status(200).send(results);
+  } catch (error) {
+    res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
+});
+
+//new-user
+app.post("/users", async (req, res) => {
+  try {
+    const { name, email, imageUrl } = req.body;
+
+    const emailAlreadyExists = await Users.exists({ email: email });
+    if (emailAlreadyExists) {
+      return res.send({ emailExists: true });
+    }
+
+    const newUser = await Users.create({
+      name: name,
+      email: email,
+      imageUrl: imageUrl,
+      createdAt: new Date(),
+    });
+
+    res.status(200).send(newUser);
+  } catch (error) {
+    res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
 });
 
 app.listen(port, () => {
   console.log("listening", port);
 });
-
-//sample
-/* app.get("/create", async (req, res) => {
-    try {
-      const result = await Users.create({
-        name: "Irfat",
-        age: 25,
-        email: "imirfat@gmail.com",
-      });
-      console.log("added");
-      res.send(result);
-    } catch (error) {
-      console.log(error);
-    }
-  }); */
