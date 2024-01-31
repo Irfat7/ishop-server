@@ -20,12 +20,20 @@ const productsSchema = mongoose.Schema({
   ],
 });
 
+
 productsSchema.pre("save", async function (next) {
   try {
     const categoryExists = await Categories.findById(this.category);
 
     if (!categoryExists) {
       throw new Error("CategoryNotExist");
+    }
+
+    const alreadyContains = categoryExists.products.includes(this._id);
+
+    if (!alreadyContains) {
+      category.products.push(this._id);
+      await category.save();
     }
 
     next();

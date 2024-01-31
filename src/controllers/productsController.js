@@ -18,8 +18,6 @@ exports.createProduct = async (req, res) => {
       quantity,
     });
 
-    console.log(newProduct);
-
     await newProduct.save();
     res.status(201).send(newProduct);
   } catch (error) {
