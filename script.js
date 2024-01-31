@@ -4,55 +4,31 @@ const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 3001;
 const mongoose = require("mongoose");
-const Users = require("./models/Users");
-const Categories = require("./models/Categories");
-const Products = require("./models/Products");
-const Reviews = require("./models/Reviews");
+const usersRoutes = require("./src/routes/usersRoutes");
 
 //middleware
 app.use(cors());
 app.use(express.json());
+app.use(usersRoutes);
 
-//connection
-mongoose.connect(
-  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jgk3xtt.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
-);
-
-//users-api
-//all-users
-app.get("/users", async (req, res) => {
+// Connection to MongoDB
+async function startServer() {
   try {
-    const results = await Users.find();
+    await mongoose.connect(
+      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jgk3xtt.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+    );
 
-    res.status(200).send(results);
-  } catch (error) {
-    res.status(500).send({ error: true, message: "Internal Server Error" });
-  }
-});
-
-//new-user
-app.post("/users", async (req, res) => {
-  try {
-    const { name, email, imageUrl } = req.body;
-
-    const emailAlreadyExists = await Users.exists({ email: email });
-    if (emailAlreadyExists) {
-      return res.send({ emailExists: true });
-    }
-
-    const newUser = await Users.create({
-      name: name,
-      email: email,
-      imageUrl: imageUrl,
-      createdAt: new Date(),
+    console.log("Connected to MongoDB");
+    // Start the server after successful connection
+    app.listen(port, () => {
+      console.log("Listening on port", port);
     });
-
-    res.status(200).send(newUser);
   } catch (error) {
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    console.error("Error connecting to MongoDB:", error);
+    // Handle the error or exit the application
+    process.exit(1);
   }
-});
+}
 
-app.listen(port, () => {
-  console.log("listening", port);
-});
+// Start the server
+startServer();
