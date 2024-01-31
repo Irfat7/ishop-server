@@ -6,12 +6,14 @@ const port = process.env.PORT || 3001;
 const mongoose = require("mongoose");
 const usersRoutes = require("./src/routes/usersRoutes");
 const productsRoutes = require("./src/routes/productsRoutes");
+const categoriesRoutes = require("./src/routes/categoriesRoutes");
 
 //middleware
 app.use(cors());
 app.use(express.json());
 app.use(usersRoutes);
 app.use(productsRoutes);
+app.use(categoriesRoutes);
 
 // Connection to MongoDB
 async function startServer() {
