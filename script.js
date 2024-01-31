@@ -5,11 +5,13 @@ require("dotenv").config();
 const port = process.env.PORT || 3001;
 const mongoose = require("mongoose");
 const usersRoutes = require("./src/routes/usersRoutes");
+const productsRoutes = require("./src/routes/productsRoutes");
 
 //middleware
 app.use(cors());
 app.use(express.json());
 app.use(usersRoutes);
+app.use(productsRoutes);
 
 // Connection to MongoDB
 async function startServer() {
