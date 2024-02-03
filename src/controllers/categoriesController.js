@@ -1,5 +1,15 @@
 const Categories = require("../models/Categories");
 
+//get-all-category
+exports.getAllCategory = async (req, res) => {
+  try {
+    const allCategories = await Categories.find();
+    res.status(201).send(allCategories);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 //new-category-create
 exports.createCategory = async (req, res) => {
   try {

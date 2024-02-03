@@ -20,7 +20,6 @@ const productsSchema = mongoose.Schema({
   ],
 });
 
-
 productsSchema.pre("save", async function (next) {
   try {
     const categoryExists = await Categories.findById(this.category);
@@ -32,8 +31,8 @@ productsSchema.pre("save", async function (next) {
     const alreadyContains = categoryExists.products.includes(this._id);
 
     if (!alreadyContains) {
-      category.products.push(this._id);
-      await category.save();
+      categoryExists.products.push(this._id);
+      await categoryExists.save();
     }
 
     next();
