@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const usersRoutes = require("./src/routes/usersRoutes");
 const productsRoutes = require("./src/routes/productsRoutes");
 const categoriesRoutes = require("./src/routes/categoriesRoutes");
+const cartsRoutes = require("./src/routes/cartsRoutes");
 
 //middleware
 app.use(cors());
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(usersRoutes);
 app.use(productsRoutes);
 app.use(categoriesRoutes);
+app.use(cartsRoutes);
 
 // Connection to MongoDB
 async function startServer() {

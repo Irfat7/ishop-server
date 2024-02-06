@@ -1,4 +1,3 @@
-const { ObjectId } = require("mongodb");
 const Products = require("../models/Products");
 
 //add-a-new-product
@@ -34,7 +33,7 @@ exports.getSpecificProduct = async (req, res) => {
     const product = await Products.findOne({ _id: productId });
 
     if (!product) throw Error;
-    
+
     res.status(201).send(product);
   } catch (error) {
     if (error.name === "CastError" || error.name === "Error") {
@@ -66,7 +65,7 @@ exports.getAllProducts = async (req, res) => {
 //update-product
 exports.updateProduct = async (req, res) => {
   try {
-    const productId = new ObjectId(req.params.productId);
+    const productId = req.params.productId;
     const { name, description, category, imageUrl, quantity } = req.body;
 
     if (!name || !description || !category || !imageUrl || !quantity) {
@@ -89,7 +88,7 @@ exports.updateProduct = async (req, res) => {
 
     res.status(201).send(updatedProduct);
   } catch (error) {
-    if (error.name === "BSONError") {
+    if (error.name === "CastError") {
       return res
         .status(400)
         .send({ error: true, message: "Invalid ProductId" });
