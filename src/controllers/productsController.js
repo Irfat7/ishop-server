@@ -27,6 +27,25 @@ exports.createProduct = async (req, res) => {
   }
 };
 
+//get-specific-product
+exports.getSpecificProduct = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const product = await Products.findOne({ _id: productId });
+
+    if (!product) throw Error;
+    
+    res.status(201).send(product);
+  } catch (error) {
+    if (error.name === "CastError" || error.name === "Error") {
+      return res
+        .status(404)
+        .send({ error: true, message: "Product not found" });
+    }
+    res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
+};
+
 //get-all-products
 exports.getAllProducts = async (req, res) => {
   try {
