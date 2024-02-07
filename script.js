@@ -8,6 +8,7 @@ const usersRoutes = require("./src/routes/usersRoutes");
 const productsRoutes = require("./src/routes/productsRoutes");
 const categoriesRoutes = require("./src/routes/categoriesRoutes");
 const cartsRoutes = require("./src/routes/cartsRoutes");
+const ordersRoutes = require("./src/routes/ordersRoutes");
 
 //middleware
 app.use(cors());
@@ -16,6 +17,7 @@ app.use(usersRoutes);
 app.use(productsRoutes);
 app.use(categoriesRoutes);
 app.use(cartsRoutes);
+app.use(ordersRoutes);
 
 // Connection to MongoDB
 async function startServer() {
