@@ -8,7 +8,8 @@ exports.createAnOrder = async (req, res) => {
       !Array.isArray(productId) ||
       !Array.isArray(quantity) ||
       productId.length !== quantity.length ||
-      productId.length === 0
+      productId.length === 0 ||
+      new Set(productId).size !== productId.length
     ) {
       return res
         .status(400)
