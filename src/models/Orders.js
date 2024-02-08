@@ -25,6 +25,7 @@ const ordersSchema = mongoose.Schema({
     type: String,
     lowercase: true,
   },
+  carts: [String],
 });
 
 ordersSchema.pre("save", async function (next) {

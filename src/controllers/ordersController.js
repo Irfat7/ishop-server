@@ -1,9 +1,10 @@
 const Orders = require("../models/Orders");
+const Carts = require("../models/Carts")
 
 //create-a-new-order
 exports.createAnOrder = async (req, res) => {
   try {
-    const { userId, paymentId, productId, quantity } = req.body;
+    const { userId, paymentId, productId, quantity, carts } = req.body;
     if (
       !Array.isArray(productId) ||
       !Array.isArray(quantity) ||
@@ -27,6 +28,11 @@ exports.createAnOrder = async (req, res) => {
       status: "Ordered",
     });
     await newOrder.save();
+
+    //clear carts
+    if(Array.isArray(carts)){
+      await Carts.deleteMany({ _id: { $in: carts } });
+    }
 
     res.status(201).send(newOrder);
   } catch (error) {
