@@ -4,17 +4,12 @@ const Carts = require("../models/Carts");
 //create-a-new-order
 exports.createAnOrder = async (req, res) => {
   try {
-    const { userId, paymentId, productId, quantity, carts } = req.body;
-    if (
-      !Array.isArray(productId) ||
-      !Array.isArray(quantity) ||
-      productId.length !== quantity.length ||
-      productId.length === 0 ||
-      new Set(productId).size !== productId.length
-    ) {
+    const { userId, paymentId, productInfo, carts } = req.body;
+
+    if (!userId || !paymentId || !productInfo) {
       return res
         .status(400)
-        .send({ error: true, message: "Invalid Order Items" });
+        .send({ error: true, message: "Order related info missing" });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -22,8 +17,7 @@ exports.createAnOrder = async (req, res) => {
     const newOrder = await new Orders({
       userId,
       paymentId,
-      productId,
-      quantity,
+      productInfo,
       otp,
       status: "Ordered",
     });
@@ -36,6 +30,7 @@ exports.createAnOrder = async (req, res) => {
 
     res.status(201).send(newOrder);
   } catch (error) {
+    console.log(error.message);
     if (
       error.name === "ValidationError" ||
       error.name === "CastError" ||
@@ -89,6 +84,17 @@ exports.updateOrderStatus = async (req, res) => {
         message: "Invalid id",
       });
     }
+    res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
+};
+
+//get-all-order-for-a-user
+exports.getOrdersByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const orders = await Orders.find({ userId: userId, status: "delivered" });
+    res.send(orders);
+  } catch (error) {
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }
 };

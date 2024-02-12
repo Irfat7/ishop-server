@@ -1,8 +1,25 @@
 const mongoose = require("mongoose");
 const refs = require("../constants/refs");
 const Payments = require("../models/Payments");
+const Products = require("../models/Products");
 const { checkUserIdExists } = require("../utils/userUtils");
 const { checkProductIdExists } = require("../utils/productUtils");
+
+const productInfoSchema = new mongoose.Schema({
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: refs.Products, // Reference to the Product model
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  reviewed: {
+    type: Boolean,
+    default: false, // Default value for reviewed
+  },
+});
 
 const ordersSchema = mongoose.Schema({
   userId: {
@@ -13,19 +30,12 @@ const ordersSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: refs.Payments,
   },
-  productId: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: refs.Products,
-    },
-  ],
-  quantity: [Number],
+  productInfo: [productInfoSchema],
   otp: String,
   status: {
     type: String,
     lowercase: true,
   },
-  carts: [String],
 });
 
 ordersSchema.pre("save", async function (next) {
@@ -44,13 +54,15 @@ ordersSchema.pre("save", async function (next) {
       throw new Error("Invalid user id");
     }
 
-    for (const [index, productId] of this.productId.entries()) {
-      const productExists = await checkProductIdExists(productId);
+    for (const eachOrder of this.productInfo) {
+      const productExists = await checkProductIdExists(eachOrder.productId);
       if (!productExists) {
         throw new Error("Invalid product");
       }
-      if (this.quantity[index] > productExists.quantity) {
-        throw new Error(`Sorry ${productExists.name} out of stock`);
+      if (eachOrder.quantity > productExists.quantity) {
+        throw new Error(
+          `Sorry ${productExists.name} out of stock for quantity ${eachOrder.quantity}`
+        );
       }
     }
 
@@ -58,6 +70,19 @@ ordersSchema.pre("save", async function (next) {
   } catch (error) {
     next(error);
   }
+});
+
+//reduce available quantity after a new order
+ordersSchema.post("save", async function () {
+  try {
+    for (const eachOrder of this.productInfo) {
+      const product = await Products.findById(eachOrder.productId);
+      if (product) {
+        product.quantity -= eachOrder.quantity;
+        await product.save();
+      }
+    }
+  } catch (error) {}
 });
 
 module.exports = mongoose.model(refs.Orders, ordersSchema);
