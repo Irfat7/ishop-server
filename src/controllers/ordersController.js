@@ -1,5 +1,6 @@
 const Orders = require("../models/Orders");
 const Carts = require("../models/Carts");
+const { ObjectId } = require("mongodb");
 
 //create-a-new-order
 exports.createAnOrder = async (req, res) => {
@@ -95,6 +96,42 @@ exports.getOrdersByUserId = async (req, res) => {
     const orders = await Orders.find({ userId: userId, status: "delivered" });
     res.send(orders);
   } catch (error) {
+    res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
+};
+
+//get-not-reviewed-order
+exports.getNotReviewedOrders = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const notReviewedOrders = await Orders.aggregate([
+      { $unwind: "$productInfo" },
+      {
+        $match: {
+          $and: [
+            { userId: new ObjectId(userId) },
+            { "productInfo.reviewed": false },
+            { status: "delivered" },
+          ],
+        },
+      },
+      {
+        $project: {
+          paymentId: 0,
+          otp: 0,
+          status: 0,
+        },
+      },
+    ]);
+
+    res.status(201).send(notReviewedOrders);
+  } catch (error) {
+    if (error.name === "BSONError") {
+      return res.status(400).send({
+        error: true,
+        message: "Invalid order id",
+      });
+    }
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }
 };
