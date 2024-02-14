@@ -36,7 +36,7 @@ productsSchema.pre("save", async function (next) {
     const categoryExists = await Categories.findById(this.category);
 
     if (!categoryExists) {
-      throw new Error("CategoryNotExist");
+      throw new Error("Category does not exist");
     }
 
     const alreadyContains = categoryExists.products.includes(this._id);

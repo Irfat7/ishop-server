@@ -88,14 +88,13 @@ exports.updateProduct = async (req, res) => {
 
     res.status(201).send(updatedProduct);
   } catch (error) {
-    if (error.name === "CastError") {
+    if (error.name === "CastError" || error.name === "Error") {
       return res
         .status(400)
-        .send({ error: true, message: "Invalid ProductId" });
-    } else if (error.name === "Error") {
-      return res
-        .status(404)
-        .send({ error: true, message: "Category not found" });
+        .send({
+          error: true,
+          message: error.name === "Error" ? error.message : "Invalid ProductId",
+        });
     }
 
     res.status(500).send({ error: true, message: "Internal Server Error" });
