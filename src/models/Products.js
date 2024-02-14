@@ -3,8 +3,15 @@ const refs = require("../constants/refs");
 const Categories = require("../models/Categories");
 
 const productsSchema = mongoose.Schema({
-  name: String,
-  description: String,
+  name: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  features: [String],
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: refs.Categories,
@@ -12,6 +19,10 @@ const productsSchema = mongoose.Schema({
   imageUrl: [String],
   quantity: Number,
   createdAt: Date,
+  averageRating: {
+    type: Number,
+    default: 0,
+  },
   reviews: [
     {
       type: mongoose.Schema.Types.ObjectId,

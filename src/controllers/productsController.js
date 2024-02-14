@@ -3,17 +3,11 @@ const Products = require("../models/Products");
 //add-a-new-product
 exports.createProduct = async (req, res) => {
   try {
-    const { name, description, category, imageUrl, quantity } = req.body;
-
-    if (!name || !description || !category || !imageUrl || !quantity) {
-      return res
-        .status(400)
-        .send({ error: true, message: "Product info missing" });
-    }
+    const { name, features, category, imageUrl, quantity } = req.body;
 
     const newProduct = new Products({
       name,
-      description,
+      features,
       category,
       imageUrl,
       quantity,
@@ -22,6 +16,12 @@ exports.createProduct = async (req, res) => {
     await newProduct.save();
     res.status(201).send(newProduct);
   } catch (error) {
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      return res.status(400).send({
+        error: true,
+        message: "Invalid product information",
+      });
+    }
     res.status(500).send({ error: true, message: error.message });
   }
 };
