@@ -33,3 +33,32 @@ exports.getReviewByProductId = async (req, res) => {
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }
 };
+
+//create-a-review
+exports.createNewReview = async (req, res) => {
+  try {
+    const { orderId, userId, productId, starCount } = req.body;
+    const newReview = await new Reviews({
+      orderId,
+      userId,
+      productId,
+      starCount,
+    });
+    await newReview.save();
+
+    res.status(201).send(newReview);
+  } catch (error) {
+    if (
+      error.name === "ValidationError" ||
+      error.name === "CastError" ||
+      error.name === "Error"
+    ) {
+      return res.status(400).send({
+        error: true,
+        message:
+          error.name === "Error" ? error.message : "Invalid review item(s)",
+      });
+    }
+    res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
+};
