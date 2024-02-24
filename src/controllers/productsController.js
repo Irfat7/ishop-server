@@ -3,10 +3,11 @@ const Products = require("../models/Products");
 //add-a-new-product
 exports.createProduct = async (req, res) => {
   try {
-    const { name, features, category, imageUrl, quantity } = req.body;
+    const { name, price, features, category, imageUrl, quantity } = req.body;
 
     const newProduct = new Products({
       name,
+      price,
       features,
       category,
       imageUrl,
@@ -16,6 +17,7 @@ exports.createProduct = async (req, res) => {
     await newProduct.save();
     res.status(201).send(newProduct);
   } catch (error) {
+    console.log(error);
     if (error.name === "ValidationError" || error.name === "CastError") {
       return res.status(400).send({
         error: true,
@@ -89,14 +91,31 @@ exports.updateProduct = async (req, res) => {
     res.status(201).send(updatedProduct);
   } catch (error) {
     if (error.name === "CastError" || error.name === "Error") {
-      return res
-        .status(400)
-        .send({
-          error: true,
-          message: error.name === "Error" ? error.message : "Invalid ProductId",
-        });
+      return res.status(400).send({
+        error: true,
+        message: error.name === "Error" ? error.message : "Invalid ProductId",
+      });
     }
 
+    res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const deletedDocument = await Products.findOneAndDelete({ _id: productId });
+    if (!deletedDocument) {
+      throw new Error("Product does not exist");
+    }
+    res.status(201).send(deletedDocument);
+  } catch (error) {
+    if (error.name === "CastError" || error.name === "Error") {
+      return res.status(401).send({
+        error: true,
+        message: error.name === "Error" ? error.message : "Invalid product ID",
+      });
+    }
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }
 };

@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const refs = require("../constants/refs");
-const Users = require("../models/Users");
-const Products = require("../models/Products");
 
 const cartsSchema = mongoose.Schema({
   userId: {
@@ -17,6 +15,9 @@ const cartsSchema = mongoose.Schema({
 
 cartsSchema.pre("save", async function (next) {
   try {
+    const Users = require("../models/Users");
+    const Products = require("../models/Products");
+
     const userExists = await Users.findById(this.userId);
     const productExists = await Products.findById(this.productId);
 
