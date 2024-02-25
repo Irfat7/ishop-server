@@ -4,6 +4,7 @@ const refs = require("../constants/refs");
 const categoriesSchema = mongoose.Schema({
   name: {
     type: String,
+    required: true,
     lowercase: true,
   },
   products: [

@@ -1,6 +1,6 @@
 const Categories = require("../models/Categories");
 
-//get-all-category
+//get all category
 exports.getAllCategory = async (req, res) => {
   try {
     const allCategories = await Categories.find();
@@ -10,17 +10,12 @@ exports.getAllCategory = async (req, res) => {
   }
 };
 
-//new-category-create
+//new category create
 exports.createCategory = async (req, res) => {
   try {
     const { name } = req.body;
 
-    if (!name) {
-      return res
-        .status(400)
-        .send({ error: true, message: "Category name missing" });
-    }
-    const categoryExists = await Categories.findOne({ name: name });
+    const categoryExists = await Categories.findOne({ name });
 
     if (categoryExists) {
       return res
@@ -32,6 +27,12 @@ exports.createCategory = async (req, res) => {
 
     res.status(201).send(newCategory);
   } catch (error) {
+    if (error.name === "ValidationError") {
+      return res.status(401).send({
+        error: true,
+        message: "No category name added",
+      });
+    }
     res.status(500).send("Internal Server Error");
   }
 };
