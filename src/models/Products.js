@@ -12,13 +12,34 @@ const productsSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
-  features: [String],
+  features: {
+    type: [String],
+    required: true,
+  },
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: refs.Categories,
+    required: true,
   },
-  imageUrl: [String],
-  quantity: Number,
+  discount: {
+    type: Number,
+    default: 0,
+    min: 0,
+    validate: {
+      validator: function (value) {
+        return value < this.price;
+      },
+      message: "Discount must be less than the price of the product",
+    },
+  },
+  imageUrl: {
+    type: [String],
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
   createdAt: Date,
   averageRating: {
     type: Number,

@@ -68,13 +68,6 @@ exports.getAllProducts = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
-    const { name, description, category, imageUrl, quantity } = req.body;
-
-    if (!name || !description || !category || !imageUrl || !quantity) {
-      return res
-        .status(400)
-        .send({ error: true, message: "Product info missing" });
-    }
 
     const existingProduct = await Products.findOne({ _id: productId });
 
@@ -90,10 +83,17 @@ exports.updateProduct = async (req, res) => {
 
     res.status(201).send(updatedProduct);
   } catch (error) {
-    if (error.name === "CastError" || error.name === "Error") {
+    if (
+      error.name === "CastError" ||
+      error.name === "ValidationError" ||
+      error.name === "Error"
+    ) {
       return res.status(400).send({
         error: true,
-        message: error.name === "Error" ? error.message : "Invalid ProductId",
+        message:
+          error.name === "Error" || "ValidationError"
+            ? error.message
+            : "Invalid ProductId",
       });
     }
 
