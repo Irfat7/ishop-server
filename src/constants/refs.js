@@ -8,4 +8,5 @@ module.exports = {
   Coupons: "Coupons",
   OTPs: "OTPs",
   Payments: "Payments",
+  SaleEvents: "SaleEvents",
 };

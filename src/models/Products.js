@@ -3,6 +3,24 @@ const refs = require("../constants/refs");
 const Categories = require("../models/Categories");
 const Carts = require("../models/Carts");
 
+/* const discountDetails = {
+  discountPercentage: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 50,
+  },
+  maxAmount: {
+    type: Number,
+    validate: {
+      validator: function (value) {
+        return value < this.price;
+      },
+      message: "Max discount amount must be less than the price of the product",
+    },
+  },
+}; */
+
 const productsSchema = mongoose.Schema({
   name: {
     type: String,
@@ -25,11 +43,16 @@ const productsSchema = mongoose.Schema({
     type: Number,
     default: 0,
     min: 0,
+    max: 30,
     validate: {
-      validator: function (value) {
-        return value < this.price;
+      validator: function (amount) {
+        if (amount === 30) {
+          return this.price > 1000;
+        }
+        return true;
       },
-      message: "Discount must be less than the price of the product",
+      message:
+        "For 30% discount the minimum price of the product should be 1000",
     },
   },
   imageUrl: {
