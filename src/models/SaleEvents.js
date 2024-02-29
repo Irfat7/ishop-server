@@ -87,4 +87,21 @@ saleEventsSchema.post("save", async function (doc, next) {
   }
 });
 
+saleEventsSchema.post("findOneAndDelete", async function (doc, next) {
+  try {
+    doc || next();
+    await Products.updateMany(
+      {
+        _id: { $in: doc.products },
+      },
+      {
+        discount: 0,
+      }
+    );
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = mongoose.model(refs.SaleEvents, saleEventsSchema);

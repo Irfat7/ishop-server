@@ -12,6 +12,7 @@ exports.getAllSaleEvents = async (req, res) => {
   }
 };
 
+//launch a new event
 exports.launchNewEvent = async (req, res) => {
   try {
     const { name, products, mainDiscount, discountForCheapProducts } = req.body;
@@ -38,6 +39,32 @@ exports.launchNewEvent = async (req, res) => {
           ? "Invalid event parameter passed"
           : error.message;
       return res.status(400).send({ error: true, message });
+    }
+    res.status(500).send({
+      error: true,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+//close an event
+exports.closeAnEvent = async (req, res) => {
+  try {
+    const eventId = req.params.eventId;
+    const deletedDocument = await SaleEvents.findOneAndDelete({ _id: eventId });
+    if (!deletedDocument) {
+      return res.status(404).send({
+        error: true,
+        message: "Event not found with the provided ID",
+      });
+    }
+    res.status(201).send(deletedDocument);
+  } catch (error) {
+    console.log(error.message);
+    if (error.name === "CastError") {
+      return res
+        .status(400)
+        .send({ error: true, message: "Invalid event id provided" });
     }
     res.status(500).send({
       error: true,
