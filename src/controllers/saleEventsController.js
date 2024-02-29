@@ -25,7 +25,7 @@ exports.launchNewEvent = async (req, res) => {
 
     res.status(201).send(newEvent);
   } catch (error) {
-    if (error.name == "ValidationError" || error.name == "CastError") {
+    if (error.name == "ValidationError" || error.name == "CastError" || error.name === "Error") {
       const message =
         error.name == "ValidationError" || error.name == "CastError"
           ? "Invalid Product information passed"
