@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const refs = require("../constants/refs");
 const { checkProductIdExists } = require("../utils/productUtils");
+const Products = require("../models/Products");
 
 const saleEventsSchema = mongoose.Schema({
   name: {
@@ -21,10 +22,31 @@ const saleEventsSchema = mongoose.Schema({
       message: "Sale event must have at least 20 products",
     }, */
   },
+  mainDiscount: {
+    type: Number,
+    default: 0,
+    min: 5,
+    max: 30,
+    required: true,
+  },
+  discountForCheapProducts: {
+    type: Number,
+    default: 0,
+    min: 5,
+    max: 25,
+    required: true,
+  },
 });
 
 saleEventsSchema.pre("save", async function (next) {
   try {
+    const SaleEvents = this.constructor;
+    const ongoingEvent = await SaleEvents.countDocuments();
+    if (ongoingEvent) {
+      throw new Error(
+        "Already event ongoing. Please delete the previous one to start another event."
+      );
+    }
     for (const productId of this.products) {
       const validProduct = await checkProductIdExists(productId);
       if (!validProduct) {
@@ -33,6 +55,32 @@ saleEventsSchema.pre("save", async function (next) {
         );
       }
     }
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+saleEventsSchema.post("save", async function (doc, next) {
+  try {
+    await Products.updateMany(
+      {
+        _id: { $in: doc.products },
+      },
+      [
+        {
+          $set: {
+            discount: {
+              $cond: {
+                if: { $lt: ["$price", 100] },
+                then: doc.discountForCheapProducts,
+                else: doc.mainDiscount,
+              },
+            },
+          },
+        },
+      ]
+    );
     next();
   } catch (error) {
     next(error);

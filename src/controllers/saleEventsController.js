@@ -14,23 +14,30 @@ exports.getAllSaleEvents = async (req, res) => {
 
 exports.launchNewEvent = async (req, res) => {
   try {
-    const { name, products } = req.body;
+    const { name, products, mainDiscount, discountForCheapProducts } = req.body;
 
     const newEvent = await new SaleEvents({
       name,
       products,
+      mainDiscount,
+      discountForCheapProducts,
     });
 
     await newEvent.save();
 
     res.status(201).send(newEvent);
   } catch (error) {
-    if (error.name == "ValidationError" || error.name == "CastError" || error.name === "Error") {
+    console.log(error.message);
+    if (
+      error.name == "ValidationError" ||
+      error.name == "CastError" ||
+      error.name === "Error"
+    ) {
       const message =
         error.name == "ValidationError" || error.name == "CastError"
-          ? "Invalid Product information passed"
+          ? "Invalid event parameter passed"
           : error.message;
-      return res.status(401).send({ error: true, message });
+      return res.status(400).send({ error: true, message });
     }
     res.status(500).send({
       error: true,
