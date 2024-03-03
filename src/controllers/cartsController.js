@@ -21,7 +21,7 @@ exports.addToCart = async (req, res) => {
     }
 
     await cart.save();
-    res.status(201).send(cart);
+    res.status(200).send(cart);
   } catch (error) {
     if (error.name === "ValidationError" || error.name === "CastError" || error.name === "Error") {
       return res

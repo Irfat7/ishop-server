@@ -15,7 +15,7 @@ exports.createProduct = async (req, res) => {
     });
 
     await newProduct.save();
-    res.status(201).send(newProduct);
+    res.status(200).send(newProduct);
   } catch (error) {
     console.log(error);
     if (error.name === "ValidationError" || error.name === "CastError") {
@@ -36,7 +36,7 @@ exports.getSpecificProduct = async (req, res) => {
 
     if (!product) throw Error;
 
-    res.status(201).send(product);
+    res.status(200).send(product);
   } catch (error) {
     if (error.name === "CastError" || error.name === "Error") {
       return res
@@ -58,7 +58,7 @@ exports.getAllProducts = async (req, res) => {
       .limit(pageSize)
       .populate("category");
 
-    res.status(201).send(results);
+    res.status(200).send(results);
   } catch (error) {
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }
@@ -81,7 +81,7 @@ exports.updateProduct = async (req, res) => {
 
     const updatedProduct = await existingProduct.save();
 
-    res.status(201).send(updatedProduct);
+    res.status(200).send(updatedProduct);
   } catch (error) {
     if (
       error.name === "CastError" ||
@@ -108,7 +108,7 @@ exports.deleteProduct = async (req, res) => {
     if (!deletedDocument) {
       throw new Error("Product does not exist");
     }
-    res.status(201).send(deletedDocument);
+    res.status(200).send(deletedDocument);
   } catch (error) {
     if (error.name === "CastError" || error.name === "Error") {
       return res.status(401).send({

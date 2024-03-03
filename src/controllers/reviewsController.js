@@ -5,7 +5,7 @@ exports.getReviewByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
     const reviews = await Reviews.find({ userId: userId });
-    res.status(201).send(reviews);
+    res.status(200).send(reviews);
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(400).send({
@@ -22,7 +22,7 @@ exports.getReviewByProductId = async (req, res) => {
   try {
     const productId = req.params.productId;
     const reviews = await Reviews.find({ productId: productId });
-    res.status(201).send(reviews);
+    res.status(200).send(reviews);
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(400).send({
@@ -46,7 +46,7 @@ exports.createNewReview = async (req, res) => {
     });
     await newReview.save();
 
-    res.status(201).send(newReview);
+    res.status(200).send(newReview);
   } catch (error) {
     if (
       error.name === "ValidationError" ||

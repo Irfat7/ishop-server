@@ -80,7 +80,7 @@ exports.changeRole = async (req, res) => {
       return res.status(404).send({ error: true, message: "User not found" });
     }
     
-    res.status(201).send(updatedUser);
+    res.status(200).send(updatedUser);
   } catch (error) {
     if (error.name === "ValidationError" || error.name === "CastError") {
       return res

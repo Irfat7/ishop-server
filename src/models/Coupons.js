@@ -26,7 +26,7 @@ const couponsSchema = mongoose.Schema({
 couponsSchema.pre("save", async function (next) {
   try {
     const Coupons = this.constructor;
-    const codeExists = await Coupons.find({ code: this.code });
+    const codeExists = await Coupons.findOne({ code: this.code });
     if (codeExists) {
       throw new Error("Coupon with same code already exists");
     }

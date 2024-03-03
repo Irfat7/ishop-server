@@ -4,7 +4,7 @@ const Categories = require("../models/Categories");
 exports.getAllCategory = async (req, res) => {
   try {
     const allCategories = await Categories.find();
-    res.status(201).send(allCategories);
+    res.status(200).send(allCategories);
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
@@ -25,7 +25,7 @@ exports.createCategory = async (req, res) => {
 
     const newCategory = await Categories.create({ name });
 
-    res.status(201).send(newCategory);
+    res.status(200).send(newCategory);
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(401).send({

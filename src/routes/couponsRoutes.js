@@ -4,5 +4,6 @@ const couponController = require("../controllers/couponsController");
 
 router.post("/coupons", couponController.addNewCoupon);
 router.delete("/coupons/:couponId", couponController.deleteCoupon);
+router.patch("/coupons/:couponId", couponController.updateExistingCoupon);
 
 module.exports = router;

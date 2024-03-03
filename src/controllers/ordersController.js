@@ -29,7 +29,7 @@ exports.createAnOrder = async (req, res) => {
       await Carts.deleteMany({ _id: { $in: carts } });
     }
 
-    res.status(201).send(newOrder);
+    res.status(200).send(newOrder);
   } catch (error) {
     console.log(error.message);
     if (
@@ -77,7 +77,7 @@ exports.updateOrderStatus = async (req, res) => {
       { status: "delivered" }
     );
 
-    res.status(201).send(result); //data.acknowledged = true - frontend
+    res.status(200).send(result); //data.acknowledged = true - frontend
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(400).send({
@@ -124,7 +124,7 @@ exports.getNotReviewedOrders = async (req, res) => {
       },
     ]);
 
-    res.status(201).send(notReviewedOrders);
+    res.status(200).send(notReviewedOrders);
   } catch (error) {
     if (error.name === "BSONError") {
       return res.status(400).send({

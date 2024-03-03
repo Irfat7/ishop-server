@@ -3,7 +3,7 @@ const SaleEvents = require("../models/SaleEvents");
 exports.getAllSaleEvents = async (req, res) => {
   try {
     const allEvents = await SaleEvents.find();
-    res.status(201).send(allEvents);
+    res.status(200).send(allEvents);
   } catch (error) {
     res.status(500).send({
       error: true,
@@ -26,7 +26,7 @@ exports.launchNewEvent = async (req, res) => {
 
     await newEvent.save();
 
-    res.status(201).send(newEvent);
+    res.status(200).send(newEvent);
   } catch (error) {
     console.log(error.message);
     if (
@@ -58,7 +58,7 @@ exports.closeAnEvent = async (req, res) => {
         message: "Event not found with the provided ID",
       });
     }
-    res.status(201).send(deletedDocument);
+    res.status(200).send(deletedDocument);
   } catch (error) {
     console.log(error.message);
     if (error.name === "CastError") {
