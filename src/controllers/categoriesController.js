@@ -1,5 +1,20 @@
 const Categories = require("../models/Categories");
 
+//get all products of a category
+exports.getAllofACategory = async (req, res) => {
+  try {
+    const categoryName = req.params.categoryName;
+    const categoryExists = await Categories.findOne({ name: categoryName });
+    if (!categoryExists) {
+      return res.status(404);
+    }
+    const allProducts = await Categories.find({name: categoryName}).populate('products');
+    res.status(200).send(allProducts);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 //get all category
 exports.getAllCategory = async (req, res) => {
   try {
