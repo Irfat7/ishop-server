@@ -8,7 +8,8 @@ exports.getAllofACategory = async (req, res) => {
     if (!categoryExists) {
       return res.status(404);
     }
-    const allProducts = await Categories.find({name: categoryName}).populate('products');
+    const populatedCategory = await categoryExists.populate("products");
+    const { products: allProducts } = populatedCategory;
     res.status(200).send(allProducts);
   } catch (error) {
     res.status(500).send("Internal Server Error");
