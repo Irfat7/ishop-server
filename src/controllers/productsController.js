@@ -32,9 +32,11 @@ exports.createProduct = async (req, res) => {
 exports.getSpecificProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
-    const product = await Products.findOne({ _id: productId });
+    const product = await Products.findOne({ _id: productId }).populate(
+      "category"
+    );
 
-    if (!product) throw Error;
+    if (!product) throw new Error("Product does not exist");
 
     res.status(200).send(product);
   } catch (error) {
@@ -60,6 +62,22 @@ exports.getAllProducts = async (req, res) => {
 
     res.status(200).send(results);
   } catch (error) {
+    res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
+};
+
+//search-product
+exports.searchProducts = async (req, res) => {
+  try {
+    console.log("hit");
+    const { searchTerm } = req.body;
+    const regex = new RegExp(searchTerm, "i");
+
+    const products = await Products.find({ name: regex });
+
+    res.status(200).send(products);
+  } catch (error) {
+    console.error(error);
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }
 };

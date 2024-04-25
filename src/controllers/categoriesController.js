@@ -6,7 +6,7 @@ exports.getAllofACategory = async (req, res) => {
     const categoryName = req.params.categoryName;
     const categoryExists = await Categories.findOne({ name: categoryName });
     if (!categoryExists) {
-      return res.status(404);
+      return res.send({invalidCategory: true});
     }
     const populatedCategory = await categoryExists.populate("products");
     const { products: allProducts } = populatedCategory;
