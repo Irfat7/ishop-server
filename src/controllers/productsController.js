@@ -69,10 +69,8 @@ exports.getAllProducts = async (req, res) => {
 //search-product
 exports.searchProducts = async (req, res) => {
   try {
-    console.log("hit");
-    const { searchTerm } = req.body;
+    const { searchTerm } = req.query;
     const regex = new RegExp(searchTerm, "i");
-
     const products = await Products.find({ name: regex });
 
     res.status(200).send(products);
