@@ -78,17 +78,24 @@ const productsSchema = mongoose.Schema({
 
 productsSchema.pre("save", async function (next) {
   try {
-    const categoryExists = await Categories.findById(this.category);
+    if (this.category !== this.prevCategory) {
+      const categoryExists = await Categories.findById(this.category);
 
-    if (!categoryExists) {
-      throw new Error("Category does not exist");
-    }
+      if (!categoryExists) {
+        throw new Error("Category does not exist");
+      }
 
-    const alreadyContains = categoryExists.products.includes(this._id);
+      const alreadyContains = categoryExists.products.includes(this._id);
 
-    if (!alreadyContains) {
-      categoryExists.products.push(this._id);
-      await categoryExists.save();
+      if (!alreadyContains) {
+        categoryExists.products.push(this._id);
+        await categoryExists.save();
+      }
+
+      await Categories.updateOne(
+        { _id: this.prevCategory },
+        { $pull: { products: { $in: [this._id] } } }
+      );
     }
 
     next();

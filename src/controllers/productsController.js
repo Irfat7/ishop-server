@@ -1,3 +1,4 @@
+const Categories = require("../models/Categories");
 const Products = require("../models/Products");
 
 //add-a-new-product
@@ -91,6 +92,11 @@ exports.updateProduct = async (req, res) => {
       return res
         .status(404)
         .send({ error: true, message: "Product not found" });
+    }
+
+    const { prevCategory } = req.body;
+    if (!prevCategory) {
+      return res.status(400).send({ error: true, message: "Bad Request" });
     }
 
     Object.assign(existingProduct, req.body);
