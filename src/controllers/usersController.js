@@ -55,7 +55,7 @@ exports.createNewUser = async (req, res) => {
 
     res.status(200).send(newUser);
   } catch (error) {
-    console.log('failed to add user to db', error.message);
+    console.log("failed to add user to db", error.message);
     if (error.name === "ValidationError") {
       return res.status(401).send({
         error: true,
@@ -79,7 +79,7 @@ exports.changeRole = async (req, res) => {
     if (!updatedUser) {
       return res.status(404).send({ error: true, message: "User not found" });
     }
-    
+
     res.status(200).send(updatedUser);
   } catch (error) {
     if (error.name === "ValidationError" || error.name === "CastError") {
@@ -89,4 +89,17 @@ exports.changeRole = async (req, res) => {
     }
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }
+};
+
+//admin check
+exports.adminCheck = async (req, res) => {
+  try {
+    const email = req.params.email;
+    const adminExist = await Users.findOne({
+      email: email,
+      role: "admin",
+    });
+    console.log("admin exist", adminExist);
+    return adminExist;
+  } catch (error) {}
 };
