@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 3001;
 const mongoose = require("mongoose");
+const authRoutes = require("./src/routes/authRoutes");
 const usersRoutes = require("./src/routes/usersRoutes");
 const productsRoutes = require("./src/routes/productsRoutes");
 const categoriesRoutes = require("./src/routes/categoriesRoutes");
@@ -16,6 +17,7 @@ const couponRoutes = require("./src/routes/couponsRoutes");
 //middleware
 app.use(cors());
 app.use(express.json());
+app.use(authRoutes)
 app.use(usersRoutes);
 app.use(productsRoutes);
 app.use(categoriesRoutes);

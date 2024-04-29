@@ -55,7 +55,7 @@ exports.createNewUser = async (req, res) => {
 
     res.status(200).send(newUser);
   } catch (error) {
-    console.log(error.name);
+    console.log('failed to add user to db', error.message);
     if (error.name === "ValidationError") {
       return res.status(401).send({
         error: true,
