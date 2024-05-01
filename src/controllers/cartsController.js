@@ -26,7 +26,7 @@ exports.addToCart = async (req, res) => {
     if (error.name === "ValidationError" || error.name === "CastError" || error.name === "Error") {
       return res
         .status(400)
-        .send({ error: true, message: "Invalid information" });
+        .send({ error: true, message: error.message || "Invalid information" });
     }
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }

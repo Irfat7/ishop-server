@@ -1,17 +1,32 @@
 const Categories = require("../models/Categories");
+const { options } = require("../routes/authRoutes");
 
-//get all products of a category
+//ger products
 exports.getAllofACategory = async (req, res) => {
   try {
     const categoryName = req.params.categoryName;
     const categoryExists = await Categories.findOne({ name: categoryName });
     if (!categoryExists) {
-      return res.send({invalidCategory: true});
+      return res.send({ invalidCategory: true });
     }
-    const populatedCategory = await categoryExists.populate("products");
+
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1;
+    const limit = 3;
+    const skip = (page - 1) * limit;
+
+    const populatedCategory = await await categoryExists.populate({
+      path: "products",
+      options: {
+        skip,
+        limit,
+      },
+    });
+
     const { products: allProducts } = populatedCategory;
     res.status(200).send(allProducts);
   } catch (error) {
+    console.log(error);
     res.status(500).send("Internal Server Error");
   }
 };

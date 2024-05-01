@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const refs = require("../constants/refs");
 
 const usersSchema = new mongoose.Schema({
-  name: {
+  firebaseId: {
     type: String,
     required: true,
   },

@@ -22,7 +22,6 @@ const authenticateToken = (req, res, next) => {
 };
 
 const verifyAdmin = async (req, res, next) => {
-  console.log(req.user.email, "this email will be checked for admin");
   const adminExists = await Users.findOne({
     email: req.user.email,
     role: "admin",

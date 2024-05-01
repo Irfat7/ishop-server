@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const refs = require("../constants/refs");
 const Categories = require("../models/Categories");
 const Carts = require("../models/Carts");
+const { ObjectId } = require("mongodb");
 
 /* const discountDetails = {
   discountPercentage: {
@@ -78,7 +79,7 @@ const productsSchema = mongoose.Schema({
 
 productsSchema.pre("save", async function (next) {
   try {
-    if (this.category !== this.prevCategory) {
+    if (!this.category.equals(new ObjectId(this.prevCategory))) {
       const categoryExists = await Categories.findById(this.category);
 
       if (!categoryExists) {

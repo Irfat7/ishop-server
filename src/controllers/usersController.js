@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const Users = require("../models/Users");
 
 //get-a-user
@@ -37,14 +38,14 @@ exports.getAllUsers = async (req, res) => {
 //create-new-user
 exports.createNewUser = async (req, res) => {
   try {
-    const { name, email, imageUrl, role } = req.body;
+    const { firebaseId, name, email, imageUrl, role } = req.body;
 
     const emailAlreadyExists = await Users.exists({ email: email });
     if (emailAlreadyExists) {
       return res.send({ emailExists: true });
     }
-
     const newUser = await Users.create({
+      firebaseId,
       name,
       email,
       imageUrl,
@@ -99,7 +100,28 @@ exports.adminCheck = async (req, res) => {
       email: email,
       role: "admin",
     });
-    console.log("admin exist", adminExist);
-    return adminExist;
-  } catch (error) {}
+    res.status(200).send(adminExist);
+  } catch (error) {
+    res.send(error?.message);
+  }
+};
+
+//get userId
+exports.getUserId = async (req, res) => {
+  try {
+    const firebaseId = req.query.firebaseId;
+    console.log("FirebaseId", firebaseId);
+    if (!firebaseId) {
+      throw new Error();
+    }
+    const user = await Users.findOne({
+      firebaseId,
+    });
+    if (!user) {
+      throw new Error();
+    }
+    res.status(200).send({ id: user.id });
+  } catch (error) {
+    res.send({ error: true });
+  }
 };
