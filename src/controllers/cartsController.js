@@ -23,11 +23,32 @@ exports.addToCart = async (req, res) => {
     await cart.save();
     res.status(200).send(cart);
   } catch (error) {
-    if (error.name === "ValidationError" || error.name === "CastError" || error.name === "Error") {
+    if (
+      error.name === "ValidationError" ||
+      error.name === "CastError" ||
+      error.name === "Error"
+    ) {
       return res
         .status(400)
         .send({ error: true, message: error.message || "Invalid information" });
     }
     res.status(500).send({ error: true, message: "Internal Server Error" });
+  }
+};
+
+//get cart of a user
+exports.getCartOfUser = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+    if (!userId) {
+      return res.status(400).send({ error: "UserId missing" });
+    }
+    const itemsInCart = await Carts.find({ userId: userId });
+    res.status(200).send(itemsInCart);
+  } catch (error) {
+    if (error.name === "CastError" || error.name === "BSONError") {
+      return res.status(400).send({ error: "Invalid UserId" });
+    }
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
