@@ -43,7 +43,13 @@ exports.getCartOfUser = async (req, res) => {
     if (!userId) {
       return res.status(400).send({ error: "UserId missing" });
     }
-    const itemsInCart = await Carts.find({ userId: userId });
+    const itemsInCart = await Carts.find({ userId: userId })
+      .populate({
+        path: "productId",
+        populate: { path: "category" },
+      })
+      .exec();
+
     res.status(200).send(itemsInCart);
   } catch (error) {
     if (error.name === "CastError" || error.name === "BSONError") {

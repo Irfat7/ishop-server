@@ -110,7 +110,6 @@ exports.adminCheck = async (req, res) => {
 exports.getUserId = async (req, res) => {
   try {
     const firebaseId = req.query.firebaseId;
-    console.log("FirebaseId", firebaseId);
     if (!firebaseId) {
       throw new Error();
     }
