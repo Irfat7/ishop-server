@@ -33,4 +33,34 @@ cartsSchema.pre("save", async function (next) {
   }
 });
 
+cartsSchema.statics.bulkUpdateCarts = async function (updateArray) {
+  const session = await this.startSession();
+  session.startTransaction();
+
+  try {
+    const Products = require("../models/Products");
+    
+    for (const { pId, quantity } of updateArray) {
+      const product = await Products.findById(pId);
+      if (!product) {
+        throw new Error(`Product with ID ${pId} not found`);
+      }
+
+      if (product.quantity < quantity) {
+        throw new Error(`Not enough product named ${product.name}`);
+      }
+    }
+
+    for (const { _id, quantity } of updateArray) {
+      await this.updateOne({ _id }, { $set: { quantity } }, { session });
+    }
+    await session.commitTransaction();
+    session.endSession();
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 module.exports = mongoose.model(refs.Carts, cartsSchema);

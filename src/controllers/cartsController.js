@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const Carts = require("../models/Carts");
+const { default: mongoose } = require("mongoose");
 
 //add-a-new-cart
 exports.addToCart = async (req, res) => {
@@ -54,6 +55,39 @@ exports.getCartOfUser = async (req, res) => {
   } catch (error) {
     if (error.name === "CastError" || error.name === "BSONError") {
       return res.status(400).send({ error: "Invalid UserId" });
+    }
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
+//update cart of a user
+exports.updateCarts = async (req, res) => {
+  try {
+    const { updateArray } = req.body;
+    if (
+      !updateArray ||
+      !Array.isArray(updateArray) ||
+      updateArray.length === 0
+    ) {
+      return res.status(400).send({ error: "Update info not passed" });
+    }
+
+    await Carts.bulkUpdateCarts(updateArray);
+
+    res.status(200).send({ message: "Bulk update completed successfully" });
+  } catch (error) {
+    console.log(error.message);
+    if (
+      error.name === "CastError" ||
+      error.name === "ValidationError" ||
+      error.name === "BsonError" ||
+      error.name === "Error"
+    ) {
+      return res
+        .status(400)
+        .send({
+          error: error.name === "Error" ? error.message : "Invalid info passed",
+        });
     }
     res.status(500).send({ error: "Internal Server Error" });
   }
