@@ -39,7 +39,7 @@ cartsSchema.statics.bulkUpdateCarts = async function (updateArray) {
 
   try {
     const Products = require("../models/Products");
-    
+
     for (const { pId, quantity } of updateArray) {
       const product = await Products.findById(pId);
       if (!product) {
@@ -51,7 +51,7 @@ cartsSchema.statics.bulkUpdateCarts = async function (updateArray) {
       }
     }
 
-    for (const { _id, quantity } of updateArray) {
+    for (const { id: _id, quantity } of updateArray) {
       await this.updateOne({ _id }, { $set: { quantity } }, { session });
     }
     await session.commitTransaction();

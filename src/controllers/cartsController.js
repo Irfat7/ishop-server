@@ -51,7 +51,21 @@ exports.getCartOfUser = async (req, res) => {
       })
       .exec();
 
-    res.status(200).send(itemsInCart);
+    const availableCarts = itemsInCart.filter((cart) => {
+      const productQuantity = cart.productId.quantity;
+      return cart.quantity <= productQuantity;
+    });
+
+    const cartsToDelete = itemsInCart.filter((cart) => {
+      const productQuantity = cart.productId.quantity;
+      return cart.quantity > productQuantity;
+    });
+
+    const cartIdsToDelete = cartsToDelete.map((cart) => cart._id);
+
+    await Carts.deleteMany({ _id: { $in: cartIdsToDelete } });
+
+    res.status(200).send(availableCarts);
   } catch (error) {
     if (error.name === "CastError" || error.name === "BSONError") {
       return res.status(400).send({ error: "Invalid UserId" });
@@ -76,18 +90,15 @@ exports.updateCarts = async (req, res) => {
 
     res.status(200).send({ message: "Bulk update completed successfully" });
   } catch (error) {
-    console.log(error.message);
     if (
       error.name === "CastError" ||
       error.name === "ValidationError" ||
-      error.name === "BsonError" ||
+      error.name === "BSONError" ||
       error.name === "Error"
     ) {
-      return res
-        .status(400)
-        .send({
-          error: error.name === "Error" ? error.message : "Invalid info passed",
-        });
+      return res.status(400).send({
+        error: error.name === "Error" ? error.message : "Invalid info passed",
+      });
     }
     res.status(500).send({ error: "Internal Server Error" });
   }
