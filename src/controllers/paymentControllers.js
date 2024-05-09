@@ -3,9 +3,9 @@ const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 exports.createPaymentIntent = async (req, res) => {
   try {
-    const { totalPrice } = req.body;
+    const { totalPrice, carts } = req.body;
 
-    if (!totalPrice) {
+    if (!totalPrice || !carts) {
       return res.status(400).send({ error: "Invalid Price" });
     }
 

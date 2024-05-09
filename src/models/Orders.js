@@ -8,7 +8,7 @@ const { checkProductIdExists } = require("../utils/productUtils");
 const productInfoSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: refs.Products, // Reference to the Product model
+    ref: refs.Products,
     required: true,
   },
   quantity: {
@@ -17,7 +17,7 @@ const productInfoSchema = new mongoose.Schema({
   },
   reviewed: {
     type: Boolean,
-    default: false, // Default value for reviewed
+    default: false,
   },
 });
 
