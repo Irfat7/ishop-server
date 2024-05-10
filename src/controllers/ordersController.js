@@ -1,6 +1,7 @@
 const Orders = require("../models/Orders");
 const Carts = require("../models/Carts");
 const { ObjectId } = require("mongodb");
+const { checkUserIdExists } = require("../utils/userUtils");
 
 //create-a-new-order
 exports.createAnOrder = async (req, res) => {
@@ -93,9 +94,31 @@ exports.updateOrderStatus = async (req, res) => {
 exports.getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const orders = await Orders.find({ userId: userId, status: "delivered" });
+    const userExists = await checkUserIdExists(userId);
+    if (!userExists) {
+      return res.status(404).send({
+        error: "User does not exist",
+      });
+    }
+    const orders = await Orders.aggregate([
+      { $match: { userId: new ObjectId(userId) } },
+      {
+        $addFields: {
+          orderedFirst: {
+            $cond: { if: { $eq: ["$status", "ordered"] }, then: 1, else: 0 },
+          },
+        },
+      },
+      {
+        $sort: { orderedFirst: -1 },
+      },
+    ]);
+    console.log(orders);
     res.send(orders);
   } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(400).send({ error: "Invalid Id Provided" });
+    }
     res.status(500).send({ error: true, message: "Internal Server Error" });
   }
 };
