@@ -37,12 +37,13 @@ exports.getReviewByProductId = async (req, res) => {
 //create-a-review
 exports.createNewReview = async (req, res) => {
   try {
-    const { orderId, userId, productId, starCount } = req.body;
+    const { orderId, userId, productId, starCount, message } = req.body;
     const newReview = await new Reviews({
       orderId,
       userId,
       productId,
       starCount,
+      message,
     });
     await newReview.save();
 

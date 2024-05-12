@@ -15,6 +15,10 @@ const reviewsSchema = mongoose.Schema({
     ref: refs.Orders,
     required: true,
   },
+  message: {
+    type: String,
+    required: true,
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: refs.Users,

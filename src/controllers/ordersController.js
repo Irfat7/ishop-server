@@ -78,7 +78,7 @@ exports.updateOrderStatus = async (req, res) => {
       { status: "delivered" }
     );
 
-    res.status(200).send(result); //data.acknowledged = true - frontend
+    res.status(200).send(result);
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(400).send({
@@ -103,6 +103,23 @@ exports.getOrdersByUserId = async (req, res) => {
     const orders = await Orders.aggregate([
       { $match: { userId: new ObjectId(userId) } },
       {
+        $lookup: {
+          from: "payments",
+          localField: "paymentId",
+          foreignField: "_id",
+          as: "paymentInfo",
+        },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productInfo.productId",
+          foreignField: "_id",
+          as: "productDescription",
+        },
+      },
+      { $unwind: "$paymentInfo" },
+      {
         $addFields: {
           orderedFirst: {
             $cond: { if: { $eq: ["$status", "ordered"] }, then: 1, else: 0 },
@@ -113,7 +130,6 @@ exports.getOrdersByUserId = async (req, res) => {
         $sort: { orderedFirst: -1 },
       },
     ]);
-    console.log(orders);
     res.send(orders);
   } catch (error) {
     if (error.name === "CastError") {
