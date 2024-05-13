@@ -70,10 +70,20 @@ exports.getAllProducts = async (req, res) => {
 //search-product
 exports.searchProducts = async (req, res) => {
   try {
-    const { searchTerm } = req.query;
+    const searchTerm = req.query.searchTerm;
+    const sortOption = req.query.sortOption || "default";
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 3;
+    const skipCount = (page - 1) * pageSize;
     const regex = new RegExp(searchTerm, "i");
-    const products = await Products.find({ name: regex });
-
+    const products = await Products.find({ name: regex })
+      .skip(skipCount)
+      .limit(pageSize)
+      .sort(
+        sortOption === "default"
+          ? {}
+          : { [sortOption]: sortOption === "price" ? 1 : -1 }
+      );
     res.status(200).send(products);
   } catch (error) {
     console.error(error);

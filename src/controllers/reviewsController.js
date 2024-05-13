@@ -1,9 +1,14 @@
 const Reviews = require("../models/Reviews");
+const { checkUserIdExists } = require("../utils/userUtils");
 
 //get-all-the-reviews-done-by-a-specific-user
 exports.getReviewByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
+    const userExists = await checkUserIdExists(userId);
+    if (!userExists) {
+      return res.status(404).send({ error: "User does not exist" });
+    }
     const reviews = await Reviews.find({ userId: userId });
     res.status(200).send(reviews);
   } catch (error) {
