@@ -27,7 +27,10 @@ exports.getSpecificUser = async (req, res) => {
 //get-all-users
 exports.getAllUsers = async (req, res) => {
   try {
-    const results = await Users.find();
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 3;
+    const skipCount = (page - 1) * pageSize;
+    const results = await Users.find().skip(skipCount).limit(pageSize);
 
     res.status(200).send(results);
   } catch (error) {
