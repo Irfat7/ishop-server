@@ -14,11 +14,10 @@ exports.addNewCoupon = async (req, res) => {
   } catch (error) {
     if (error.name === "ValidationError" || error.name === "Error") {
       return res.status(400).send({
-        error: true,
-        message: error.message,
+        error: error.message,
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -34,19 +33,15 @@ exports.updateExistingCoupon = async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!updatedCoupon) {
-      return res
-        .status(404)
-        .send({ error: true, message: "Coupon doesn't exist" });
+      return res.status(404).send({ error: "Coupon doesn't exist" });
     }
     res.status(200).send(updatedCoupon);
   } catch (error) {
     console.log(error.message);
     if (error.name === "CastError" || error.name === "ValidationError") {
-      return res
-        .status(400)
-        .send({ error: true, message: "Invalid Coupon Information" });
+      return res.status(400).send({ error: "Invalid Coupon Information" });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -57,18 +52,16 @@ exports.deleteCoupon = async (req, res) => {
     const deletedCoupon = await Coupons.findOneAndDelete({ _id: couponId });
     if (!deletedCoupon) {
       return res.status(404).send({
-        error: true,
-        message: "Coupon already deleted or doesn't exist",
+        error: "Coupon already deleted or doesn't exist",
       });
     }
     res.status(200).send(deletedCoupon);
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(400).send({
-        error: true,
-        message: "Invalid coupon id",
+        error: "Invalid coupon id",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };

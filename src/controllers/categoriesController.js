@@ -44,26 +44,23 @@ exports.getAllCategory = async (req, res) => {
 //new category create
 exports.createCategory = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, imageUrl } = req.body;
 
     const categoryExists = await Categories.findOne({ name });
 
     if (categoryExists) {
-      return res
-        .status(400)
-        .send({ error: true, message: "Category already exists" });
+      return res.status(400).send({ error: "Category already exists" });
     }
 
-    const newCategory = await Categories.create({ name });
+    const newCategory = await Categories.create({ name, imageUrl });
 
     res.status(200).send(newCategory);
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(401).send({
-        error: true,
-        message: "No category name added",
+        error: "No category name added",
       });
     }
-    res.status(500).send("Internal Server Error");
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };

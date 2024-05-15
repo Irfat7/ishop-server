@@ -8,9 +8,7 @@ exports.addToCart = async (req, res) => {
     const { userId, productId, quantity } = req.body;
 
     if (!userId || !productId || !quantity) {
-      return res
-        .status(400)
-        .send({ error: true, message: "Cart information missing" });
+      return res.status(400).send({ error: "Cart information missing" });
     }
 
     let cart = await Carts.findOne({ userId, productId });
@@ -31,9 +29,9 @@ exports.addToCart = async (req, res) => {
     ) {
       return res
         .status(400)
-        .send({ error: true, message: error.message || "Invalid information" });
+        .send({ error: error.message || "Invalid information" });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 

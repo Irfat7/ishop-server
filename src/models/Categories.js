@@ -7,6 +7,10 @@ const categoriesSchema = mongoose.Schema({
     required: true,
     lowercase: true,
   },
+  imageUrl:{
+    type: String,
+    required: true,
+  },
   products: [
     {
       type: mongoose.Schema.Types.ObjectId,

@@ -36,6 +36,10 @@ const ordersSchema = mongoose.Schema({
     type: String,
     lowercase: true,
   },
+  address: {
+    type: String,
+    required: true,
+  }
 });
 
 ordersSchema.pre("save", async function (next) {

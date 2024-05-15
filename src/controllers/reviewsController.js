@@ -14,11 +14,10 @@ exports.getReviewByUserId = async (req, res) => {
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(400).send({
-        error: true,
-        message: "Invalid User Id",
+        error: "Invalid User Id",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -31,11 +30,10 @@ exports.getReviewByProductId = async (req, res) => {
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(400).send({
-        error: true,
-        message: "Invalid Product Id",
+        error: "Invalid Product Id",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -60,11 +58,10 @@ exports.createNewReview = async (req, res) => {
       error.name === "Error"
     ) {
       return res.status(400).send({
-        error: true,
-        message:
+        error:
           error.name === "Error" ? error.message : "Invalid review item(s)",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };

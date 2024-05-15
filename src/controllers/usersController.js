@@ -7,20 +7,18 @@ exports.getSpecificUser = async (req, res) => {
     const email = req.params.email;
 
     if (!email) {
-      return res
-        .status(400)
-        .send({ error: true, message: "Email parameter is required" });
+      return res.status(400).send({ error: "Email parameter is required" });
     }
 
     const user = await Users.findOne({ email: email });
 
     if (!user) {
-      return res.status(404).send({ error: true, message: "User not found" });
+      return res.status(404).send({ error: "User not found" });
     }
 
     res.status(200).send(user);
   } catch (error) {
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -34,7 +32,7 @@ exports.getAllUsers = async (req, res) => {
 
     res.status(200).send(results);
   } catch (error) {
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -62,11 +60,10 @@ exports.createNewUser = async (req, res) => {
     console.log("failed to add user to db", error.message);
     if (error.name === "ValidationError") {
       return res.status(401).send({
-        error: true,
-        message: "Invalid User Info",
+        error: "Invalid User Info",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -81,17 +78,15 @@ exports.changeRole = async (req, res) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).send({ error: true, message: "User not found" });
+      return res.status(404).send({ error: "User not found" });
     }
 
     res.status(200).send(updatedUser);
   } catch (error) {
     if (error.name === "ValidationError" || error.name === "CastError") {
-      return res
-        .status(401)
-        .send({ error: true, message: "Invalid User Info" });
+      return res.status(401).send({ error: "Invalid User Info" });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -114,7 +109,7 @@ exports.getUserId = async (req, res) => {
   try {
     const firebaseId = req.query.firebaseId;
     if (!firebaseId) {
-      throw new Error();
+      throw new Error("No uid provided");
     }
     const user = await Users.findOne({
       firebaseId,
@@ -124,6 +119,6 @@ exports.getUserId = async (req, res) => {
     }
     res.status(200).send({ id: user.id });
   } catch (error) {
-    res.send({ error: true });
+    res.send({ error: error.message || "Something went wrong" });
   }
 };

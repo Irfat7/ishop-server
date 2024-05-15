@@ -9,9 +9,7 @@ exports.createAnOrder = async (req, res) => {
     const { userId, paymentId, productInfo, carts } = req.body;
 
     if (!userId || !paymentId || !productInfo) {
-      return res
-        .status(400)
-        .send({ error: true, message: "Order related info missing" });
+      return res.status(400).send({ error: "Order related info missing" });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -22,6 +20,7 @@ exports.createAnOrder = async (req, res) => {
       productInfo,
       otp,
       status: "Ordered",
+      address: "1234567890 1234567890 1234567890",
     });
     await newOrder.save();
 
@@ -39,11 +38,10 @@ exports.createAnOrder = async (req, res) => {
       error.name === "Error"
     ) {
       return res.status(400).send({
-        error: true,
-        message: error.name === "Error" ? error.message : "Invalid Order Info",
+        error: error.name === "Error" ? error.message : "Invalid Order Info",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -55,8 +53,7 @@ exports.updateOrderStatus = async (req, res) => {
 
     if (!orderId || !otp) {
       return res.status(400).send({
-        error: true,
-        message: "Missing order id or otp",
+        error: "Missing order id or otp",
       });
     }
 
@@ -64,13 +61,12 @@ exports.updateOrderStatus = async (req, res) => {
 
     if (!order) {
       return res.status(404).send({
-        error: true,
-        message: "Order does not exist",
+        error: "Order does not exist",
       });
     }
 
     if (order.otp != otp) {
-      return res.status(401).send({ error: true, message: "Wrong otp" });
+      return res.status(401).send({ error: "Wrong otp" });
     }
 
     const result = await Orders.updateOne(
@@ -82,11 +78,10 @@ exports.updateOrderStatus = async (req, res) => {
   } catch (error) {
     if (error.name === "CastError") {
       return res.status(400).send({
-        error: true,
-        message: "Invalid id",
+        error: "Invalid id",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -135,7 +130,54 @@ exports.getOrdersByUserId = async (req, res) => {
     if (error.name === "CastError") {
       return res.status(400).send({ error: "Invalid Id Provided" });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
+// get all orders for admin
+exports.getAllOrders = async (req, res) => {
+  try {
+    const sortOption = req.query.sortOption || "default";
+    const queryMap = {
+      ordered: { status: "ordered" },
+      delivered: { status: "delivered" },
+    };
+    const query = queryMap[sortOption] || {};
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 3;
+    const skipPage = (page - 1) * pageSize;
+    /* const orders = await Orders.find(query).skip(skipPage).limit(pageSize); */
+    const orders = await Orders.aggregate([
+      {
+        $match: query,
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "customerInfo",
+        },
+      },
+      {
+        $unwind: "$customerInfo",
+      },
+      {
+        $project: {
+          _id: 1,
+          customerName: "$customerInfo.name",
+          status: 1,
+          productInfo: 1
+        },
+      },
+    ])
+      .skip(skipPage)
+      .limit(pageSize);
+    console.log(orders);
+    res.status(200).send(orders);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ error: "Internal server error" });
   }
 };
 
@@ -167,10 +209,9 @@ exports.getNotReviewedOrders = async (req, res) => {
   } catch (error) {
     if (error.name === "BSONError") {
       return res.status(400).send({
-        error: true,
-        message: "Invalid order id",
+        error: "Invalid order id",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };

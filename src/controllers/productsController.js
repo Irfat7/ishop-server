@@ -18,14 +18,13 @@ exports.createProduct = async (req, res) => {
     await newProduct.save();
     res.status(200).send(newProduct);
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     if (error.name === "ValidationError" || error.name === "CastError") {
       return res.status(400).send({
-        error: true,
-        message: "Invalid product information",
+        error: "Invalid product information",
       });
     }
-    res.status(500).send({ error: true, message: error.message });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -42,11 +41,9 @@ exports.getSpecificProduct = async (req, res) => {
     res.status(200).send(product);
   } catch (error) {
     if (error.name === "CastError" || error.name === "Error") {
-      return res
-        .status(404)
-        .send({ error: true, message: "Product not found" });
+      return res.status(404).send({ error: "Product not found" });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -63,7 +60,7 @@ exports.getAllProducts = async (req, res) => {
 
     res.status(200).send(results);
   } catch (error) {
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -87,7 +84,7 @@ exports.searchProducts = async (req, res) => {
     res.status(200).send(products);
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -99,14 +96,12 @@ exports.updateProduct = async (req, res) => {
     const existingProduct = await Products.findOne({ _id: productId });
 
     if (!existingProduct) {
-      return res
-        .status(404)
-        .send({ error: true, message: "Product not found" });
+      return res.status(404).send({ error: "Product not found" });
     }
 
     const { prevCategory } = req.body;
     if (!prevCategory) {
-      return res.status(400).send({ error: true, message: "Bad Request" });
+      return res.status(400).send({ error: "Bad Request" });
     }
 
     Object.assign(existingProduct, req.body);
@@ -121,15 +116,14 @@ exports.updateProduct = async (req, res) => {
       error.name === "Error"
     ) {
       return res.status(400).send({
-        error: true,
-        message:
+        error:
           error.name === "Error" || "ValidationError"
             ? error.message
             : "Invalid ProductId",
       });
     }
 
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
 
@@ -144,10 +138,9 @@ exports.deleteProduct = async (req, res) => {
   } catch (error) {
     if (error.name === "CastError" || error.name === "Error") {
       return res.status(401).send({
-        error: true,
-        message: error.name === "Error" ? error.message : "Invalid product ID",
+        error: error.name === "Error" ? error.message : "Invalid product ID",
       });
     }
-    res.status(500).send({ error: true, message: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };

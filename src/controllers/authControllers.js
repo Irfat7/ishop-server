@@ -9,6 +9,6 @@ exports.register = async (req, res) => {
     const token = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: "1h" });
     res.status(200).send({ token });
   } catch (error) {
-    res.send({ error: true, message: error.message || "Token failed" });
+    res.send({ error: error.message || "Token failed" });
   }
 };

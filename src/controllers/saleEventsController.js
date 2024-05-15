@@ -6,8 +6,7 @@ exports.getAllSaleEvents = async (req, res) => {
     res.status(200).send(allEvents);
   } catch (error) {
     res.status(500).send({
-      error: true,
-      message: "Internal Server Error",
+      error: "Internal Server Error",
     });
   }
 };
@@ -38,11 +37,10 @@ exports.launchNewEvent = async (req, res) => {
         error.name == "ValidationError" || error.name == "CastError"
           ? "Invalid event parameter passed"
           : error.message;
-      return res.status(400).send({ error: true, message });
+      return res.status(400).send({ error: message });
     }
     res.status(500).send({
-      error: true,
-      message: "Internal Server Error",
+      error: "Internal Server Error",
     });
   }
 };
@@ -54,21 +52,17 @@ exports.closeAnEvent = async (req, res) => {
     const deletedDocument = await SaleEvents.findOneAndDelete({ _id: eventId });
     if (!deletedDocument) {
       return res.status(404).send({
-        error: true,
-        message: "Event not found with the provided ID",
+        error: "Event not found with the provided ID",
       });
     }
     res.status(200).send(deletedDocument);
   } catch (error) {
     console.log(error.message);
     if (error.name === "CastError") {
-      return res
-        .status(400)
-        .send({ error: true, message: "Invalid event id provided" });
+      return res.status(400).send({ error: "Invalid event id provided" });
     }
     res.status(500).send({
-      error: true,
-      message: "Internal Server Error",
+      error: "Internal Server Error",
     });
   }
 };
