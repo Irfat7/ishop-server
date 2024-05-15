@@ -160,14 +160,79 @@ exports.getAllOrders = async (req, res) => {
         },
       },
       {
-        $unwind: "$customerInfo",
+        $lookup: {
+          from: "payments",
+          localField: "paymentId",
+          foreignField: "_id",
+          as: "paymentInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$customerInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$paymentInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$productInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productInfo.productId",
+          foreignField: "_id",
+          as: "productDesc",
+        },
+      },
+      {
+        $unwind: {
+          path: "$productDesc",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          "productInfo.productName": {
+            $ifNull: ["$productDesc.name", "Not Available"],
+          },
+          "productInfo.price": {
+            $ifNull: ["$productDesc.price", "Not Available"],
+          },
+          customerName: { $ifNull: ["$customerInfo.name", "Not Available"] },
+          payment: { $ifNull: ["$paymentInfo.amount", "Not Available"] },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          userId: { $first: "$userId" },
+          customerName: { $first: "$customerName" },
+          payment: { $first: "$payment" },
+          productInfo: { $push: "$productInfo" },
+          otp: { $first: "$otp" },
+          status: { $first: "$status" },
+          address: { $first: "$address" },
+        },
       },
       {
         $project: {
           _id: 1,
-          customerName: "$customerInfo.name",
+          userId: 1,
+          customerName: 1,
+          payment: 1,
+          productInfo: 1,
+          otp: 1,
           status: 1,
-          productInfo: 1
+          address: 1,
         },
       },
     ])
