@@ -289,14 +289,113 @@ exports.getOrdersByLastDigit = async (req, res) => {
       .status(400)
       .send({ error: "Invalid or missing lastDigits parameter" });
   }
+  const lastDigitRegex = new RegExp(lastDigits + "$");
   try {
-    const allOrders = await Orders.find({});
+    const result = await Orders.aggregate([
+      {
+        $addFields: {
+          idString: { $toString: "$_id" },
+        },
+      },
+      {
+        $match: {
+          idString: { $regex: lastDigitRegex },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "customerInfo",
+        },
+      },
+      {
+        $lookup: {
+          from: "payments",
+          localField: "paymentId",
+          foreignField: "_id",
+          as: "paymentInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$customerInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$paymentInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$productInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productInfo.productId",
+          foreignField: "_id",
+          as: "productDesc",
+        },
+      },
+      {
+        $unwind: {
+          path: "$productDesc",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          "productInfo.productName": {
+            $ifNull: ["$productDesc.name", "Not Available"],
+          },
+          "productInfo.image": {
+            $ifNull: ["$productDesc.imageUrl", "Not Available"],
+          },
+          customerName: { $ifNull: ["$customerInfo.name", "Not Available"] },
+          payment: { $ifNull: ["$paymentInfo.amount", "Not Available"] },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          userId: { $first: "$userId" },
+          customerName: { $first: "$customerName" },
+          payment: { $first: "$payment" },
+          productInfo: { $push: "$productInfo" },
+          otp: { $first: "$otp" },
+          status: { $first: "$status" },
+          address: { $first: "$address" },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          userId: 1,
+          customerName: 1,
+          payment: 1,
+          productInfo: 1,
+          status: 1,
+          address: 1,
+        },
+      },
+    ]);
+    console.log(result);
+
+    return res.status(200).send(result);
+    /* const allOrders = await Orders.find({});
 
     const matchingOrders = allOrders.filter((order) =>
       order._id.toString().endsWith(lastDigits)
     );
 
-    return res.status(200).send(matchingOrders);
+    return res.status(200).send(matchingOrders); */
   } catch (error) {
     console.log(error.message);
   }
