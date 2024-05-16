@@ -279,3 +279,25 @@ exports.getNotReviewedOrders = async (req, res) => {
     res.status(500).send({ error: "Internal Server Error" });
   }
 };
+
+//get orders that ends with last digit
+exports.getOrdersByLastDigit = async (req, res) => {
+  const lastDigits = req.query.lastDigits;
+
+  if (!lastDigits || typeof lastDigits !== "string") {
+    return res
+      .status(400)
+      .send({ error: "Invalid or missing lastDigits parameter" });
+  }
+  try {
+    const allOrders = await Orders.find({});
+
+    const matchingOrders = allOrders.filter((order) =>
+      order._id.toString().endsWith(lastDigits)
+    );
+
+    return res.status(200).send(matchingOrders);
+  } catch (error) {
+    console.log(error.message);
+  }
+};

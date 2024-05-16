@@ -16,6 +16,12 @@ router.get(
   ordersController.getAllOrders
 );
 router.get(
+  "/orders/get/last-digit",
+  /* authenticateToken,
+  verifyAdmin, */
+  ordersController.getOrdersByLastDigit
+);
+router.get(
   "/orders/not-reviewed/:userId",
   ordersController.getNotReviewedOrders
 );
