@@ -8,12 +8,12 @@ const authenticateToken = (req, res, next) => {
   if (token == null) {
     console.log(authHeader);
     console.log(token);
-    return res.status(401).send({ error: "unauthorized access" });
+    return res.status(401).send({ error: "unauthorized access", logOut: true });
   }
 
   jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
     if (err) {
-      return res.status(403).send({ error: "Forbidden" });
+      return res.status(403).send({ error: "Forbidden", logOut: true });
     }
     req.user = user;
 
@@ -27,7 +27,7 @@ const verifyAdmin = async (req, res, next) => {
     role: "admin",
   });
   if (!adminExists) {
-    return res.status(403).send({ error: "Unauthorized Access" });
+    return res.status(403).send({ error: "Unauthorized Access", logOut: true });
   }
   next();
 };

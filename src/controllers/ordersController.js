@@ -204,8 +204,8 @@ exports.getAllOrders = async (req, res) => {
           "productInfo.productName": {
             $ifNull: ["$productDesc.name", "Not Available"],
           },
-          "productInfo.price": {
-            $ifNull: ["$productDesc.price", "Not Available"],
+          "productInfo.image": {
+            $ifNull: ["$productDesc.imageUrl", "Not Available"],
           },
           customerName: { $ifNull: ["$customerInfo.name", "Not Available"] },
           payment: { $ifNull: ["$paymentInfo.amount", "Not Available"] },
@@ -230,7 +230,6 @@ exports.getAllOrders = async (req, res) => {
           customerName: 1,
           payment: 1,
           productInfo: 1,
-          otp: 1,
           status: 1,
           address: 1,
         },
