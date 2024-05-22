@@ -72,7 +72,7 @@ saleEventsSchema.post("save", async function (doc, next) {
           $set: {
             discount: {
               $cond: {
-                if: { $lt: ["$price", 100] },
+                if: { $lt: ["$price", 1001] },
                 then: doc.discountForCheapProducts,
                 else: doc.mainDiscount,
               },

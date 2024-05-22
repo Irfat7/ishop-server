@@ -2,8 +2,9 @@ const SaleEvents = require("../models/SaleEvents");
 
 exports.getAllSaleEvents = async (req, res) => {
   try {
-    const allEvents = await SaleEvents.find();
-    res.status(200).send(allEvents);
+    const allEvents = await SaleEvents.find().populate('products');
+    const [firstEvent,] = allEvents
+    res.status(200).send(firstEvent);
   } catch (error) {
     res.status(500).send({
       error: "Internal Server Error",
@@ -49,6 +50,7 @@ exports.launchNewEvent = async (req, res) => {
 exports.closeAnEvent = async (req, res) => {
   try {
     const eventId = req.params.eventId;
+    console.log(eventId);
     const deletedDocument = await SaleEvents.findOneAndDelete({ _id: eventId });
     if (!deletedDocument) {
       return res.status(404).send({
