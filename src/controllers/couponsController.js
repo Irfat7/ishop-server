@@ -101,7 +101,13 @@ exports.getCouponByCode = async (req, res) => {
 exports.reduceCouponQuantity = async (req, res) => {
   try {
     const couponCode = req.params.couponCode;
-    const updatedCoupon = await Coupons.reduceQuantityByOne(couponCode);
+    const updatedCoupon = await Coupons.findOneAndUpdate(
+      {
+        code: couponCode,
+        quantity: { $gt: 0 },
+      },
+      { $inc: { quantity: -1 } }
+    );
     res.status(200).send(updatedCoupon);
   } catch (error) {
     console.error(error.message);

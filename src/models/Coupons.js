@@ -23,19 +23,6 @@ const couponsSchema = mongoose.Schema({
   },
 });
 
-couponsSchema.statics.reduceQuantityByOne = async function (couponCode) {
-  const coupon = await this.findOne({ code: couponCode });
-  if (!coupon) {
-    throw new Error("Coupon not found");
-  }
-  if (coupon.quantity <= 0) {
-    throw new Error("Coupon quantity is already zero");
-  }
-  coupon.quantity -= 1;
-  await coupon.save();
-  return coupon;
-};
-
 couponsSchema.pre("save", async function (next) {
   try {
     const Coupons = this.constructor;
