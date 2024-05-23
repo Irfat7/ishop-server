@@ -76,3 +76,23 @@ exports.getExistingCoupon = async (req, res) => {
     res.status(500).send({ error: "Internal Server Error" });
   }
 };
+
+//get coupon by code
+exports.getCouponByCode = async (req, res) => {
+  try {
+    const couponCode = req.params.couponCode;
+    const coupon = await Coupons.findOne({
+      code: couponCode,
+      quantity: { $gt: 0 },
+    });
+
+    if (!coupon) {
+      return res.status(404).send({ error: "Coupon does not exist" });
+    }
+
+    res.status(200).send(coupon);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+};
