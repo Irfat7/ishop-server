@@ -96,3 +96,15 @@ exports.getCouponByCode = async (req, res) => {
     res.status(500).send({ error: "Internal Server Error" });
   }
 };
+
+//reduce coupon
+exports.reduceCouponQuantity = async (req, res) => {
+  try {
+    const couponCode = req.params.couponCode;
+    const updatedCoupon = await Coupons.reduceQuantityByOne(couponCode);
+    res.status(200).send(updatedCoupon);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send({ error: error.message });
+  }
+};
