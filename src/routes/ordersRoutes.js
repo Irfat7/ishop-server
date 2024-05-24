@@ -25,5 +25,9 @@ router.get(
   "/orders/not-reviewed/:userId",
   ordersController.getNotReviewedOrders
 );
+router.get(
+  "/orders/most-popular",
+  ordersController.getMostPopularProducts
+);
 
 module.exports = router;

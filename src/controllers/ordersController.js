@@ -386,17 +386,44 @@ exports.getOrdersByLastDigit = async (req, res) => {
         },
       },
     ]);
-    console.log(result);
 
     return res.status(200).send(result);
-    /* const allOrders = await Orders.find({});
-
-    const matchingOrders = allOrders.filter((order) =>
-      order._id.toString().endsWith(lastDigits)
-    );
-
-    return res.status(200).send(matchingOrders); */
   } catch (error) {
     console.log(error.message);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
+//most popular products
+exports.getMostPopularProducts = async (req, res) => {
+  try {
+    const popularProducts = await Orders.aggregate([
+      { $unwind: "$productInfo" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productInfo.productId",
+          foreignField: "_id",
+          as: "product",
+        },
+      },
+      { $unwind: "$product" },
+      {
+        $group: {
+          _id: "$productInfo.productId",
+          count: { $sum: 1 },
+          product: { $first: "$product" },
+        },
+      },
+      {
+        $sort: {
+          count: -1,
+        },
+      },
+    ]);
+    res.status(200).send(popularProducts);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };

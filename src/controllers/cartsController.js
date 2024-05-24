@@ -113,7 +113,7 @@ exports.deleteProductFromCart = async (req, res) => {
         .status(400)
         .send({ error: "Cart does not exist or already deleted" });
     }
-    res.status(200).send(response);
+    res.status(200).send(deletionComplete);
   } catch (error) {
     console.log(error.message);
     if (error.name === "CastError") {
