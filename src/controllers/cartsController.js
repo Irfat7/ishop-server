@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const Carts = require("../models/Carts");
 const { default: mongoose } = require("mongoose");
+const { findOneAndDelete } = require("../models/Users");
 
 //add-a-new-cart
 exports.addToCart = async (req, res) => {
@@ -96,6 +97,28 @@ exports.updateCarts = async (req, res) => {
     ) {
       return res.status(400).send({
         error: error.name === "Error" ? error.message : "Invalid info passed",
+      });
+    }
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
+//delete product from a users cart
+exports.deleteProductFromCart = async (req, res) => {
+  try {
+    const cartId = req.params.cartId;
+    const deletionComplete = await Carts.findOneAndDelete({ _id: cartId });
+    if (!deletionComplete) {
+      return res
+        .status(400)
+        .send({ error: "Cart does not exist or already deleted" });
+    }
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error.message);
+    if (error.name === "CastError") {
+      return res.status(400).send({
+        error: "Invalid id passed",
       });
     }
     res.status(500).send({ error: "Internal Server Error" });

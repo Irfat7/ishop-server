@@ -25,7 +25,9 @@ exports.getReviewByUserId = async (req, res) => {
 exports.getReviewByProductId = async (req, res) => {
   try {
     const productId = req.params.productId;
-    const reviews = await Reviews.find({ productId: productId });
+    const reviews = await Reviews.find({ productId: productId }).populate(
+      "userId"
+    );
     res.status(200).send(reviews);
   } catch (error) {
     if (error.name === "CastError") {

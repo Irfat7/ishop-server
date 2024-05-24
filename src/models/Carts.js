@@ -23,7 +23,7 @@ cartsSchema.pre("save", async function (next) {
 
     if (!userExists || !productExists) {
       throw new Error("User or Product does not exists");
-    } else if (productExists.quantity <= this.quantity) {
+    } else if (productExists.quantity < this.quantity) {
       throw new Error("Out of stock");
     }
 
