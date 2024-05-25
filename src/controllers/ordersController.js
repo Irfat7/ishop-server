@@ -6,7 +6,7 @@ const { checkUserIdExists } = require("../utils/userUtils");
 //create-a-new-order
 exports.createAnOrder = async (req, res) => {
   try {
-    const { userId, paymentId, productInfo, carts } = req.body;
+    const { userId, paymentId, productInfo, carts, address } = req.body;
 
     if (!userId || !paymentId || !productInfo) {
       return res.status(400).send({ error: "Order related info missing" });
@@ -20,7 +20,7 @@ exports.createAnOrder = async (req, res) => {
       productInfo,
       otp,
       status: "Ordered",
-      address: "1234567890 1234567890 1234567890",
+      address,
     });
     await newOrder.save();
 
