@@ -14,6 +14,7 @@ const ordersRoutes = require("./src/routes/ordersRoutes");
 const reviewsRoutes = require("./src/routes/reviewsRoutes");
 const saleEventsRoutes = require("./src/routes/saleEventsRoutes");
 const couponRoutes = require("./src/routes/couponsRoutes");
+const overallReviewsRoutes = require("./src/routes/overallReviewsRoutes");
 
 //middleware
 app.use(cors());
@@ -28,6 +29,7 @@ app.use(ordersRoutes);
 app.use(reviewsRoutes);
 app.use(saleEventsRoutes);
 app.use(couponRoutes);
+app.use(overallReviewsRoutes);
 
 // Connection to MongoDB
 async function startServer() {

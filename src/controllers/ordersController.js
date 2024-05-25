@@ -420,7 +420,7 @@ exports.getMostPopularProducts = async (req, res) => {
           count: -1,
         },
       },
-    ]);
+    ]).limit(20);
     res.status(200).send(popularProducts);
   } catch (error) {
     console.log(error.message);

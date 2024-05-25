@@ -9,4 +9,5 @@ module.exports = {
   OTPs: "OTPs",
   Payments: "Payments",
   SaleEvents: "SaleEvents",
+  OverallReviews: "OverallReviews",
 };
