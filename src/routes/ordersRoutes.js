@@ -6,9 +6,18 @@ const {
   verifyAdmin,
 } = require("../middlewares/authMiddleware");
 
-router.post("/orders", ordersController.createAnOrder);
-router.patch("/orders/:orderId", ordersController.updateOrderStatus);
-router.get("/orders/all/:userId", ordersController.getOrdersByUserId);
+router.post("/orders", authenticateToken, ordersController.createAnOrder);
+router.patch(
+  "/orders/:orderId",
+  authenticateToken,
+  verifyAdmin,
+  ordersController.updateOrderStatus
+);
+router.get(
+  "/orders/all/:userId",
+  authenticateToken,
+  ordersController.getOrdersByUserId
+);
 router.get(
   "/orders/get-all",
   authenticateToken,
@@ -17,17 +26,15 @@ router.get(
 );
 router.get(
   "/orders/get/last-digit",
-  /* authenticateToken,
-  verifyAdmin, */
+  authenticateToken,
+  verifyAdmin,
   ordersController.getOrdersByLastDigit
 );
 router.get(
   "/orders/not-reviewed/:userId",
+  authenticateToken,
   ordersController.getNotReviewedOrders
 );
-router.get(
-  "/orders/most-popular",
-  ordersController.getMostPopularProducts
-);
+router.get("/orders/most-popular", ordersController.getMostPopularProducts);
 
 module.exports = router;
