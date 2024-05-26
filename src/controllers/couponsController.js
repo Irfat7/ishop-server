@@ -37,7 +37,6 @@ exports.updateExistingCoupon = async (req, res) => {
     }
     res.status(200).send(updatedCoupon);
   } catch (error) {
-    console.log(error.message);
     if (error.name === "CastError" || error.name === "ValidationError") {
       return res.status(400).send({ error: "Invalid Coupon Information" });
     }
@@ -72,7 +71,6 @@ exports.getExistingCoupon = async (req, res) => {
     const coupons = await Coupons.find();
     res.status(200).send(coupons);
   } catch (error) {
-    console.log(error.message);
     res.status(500).send({ error: "Internal Server Error" });
   }
 };
@@ -92,7 +90,6 @@ exports.getCouponByCode = async (req, res) => {
 
     res.status(200).send(coupon);
   } catch (error) {
-    console.log(error.message);
     res.status(500).send({ error: "Internal Server Error" });
   }
 };

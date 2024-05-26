@@ -28,7 +28,6 @@ exports.launchNewEvent = async (req, res) => {
 
     res.status(200).send(newEvent);
   } catch (error) {
-    console.log(error.message);
     if (
       error.name == "ValidationError" ||
       error.name == "CastError" ||
@@ -50,7 +49,6 @@ exports.launchNewEvent = async (req, res) => {
 exports.closeAnEvent = async (req, res) => {
   try {
     const eventId = req.params.eventId;
-    console.log(eventId);
     const deletedDocument = await SaleEvents.findOneAndDelete({ _id: eventId });
     if (!deletedDocument) {
       return res.status(404).send({
@@ -59,7 +57,6 @@ exports.closeAnEvent = async (req, res) => {
     }
     res.status(200).send(deletedDocument);
   } catch (error) {
-    console.log(error.message);
     if (error.name === "CastError") {
       return res.status(400).send({ error: "Invalid event id provided" });
     }

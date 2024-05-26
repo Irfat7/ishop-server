@@ -8,7 +8,6 @@ exports.createNewOverallReview = async (req, res) => {
     await newReview.save();
     res.status(200).send(newReview);
   } catch (error) {
-    console.log(error.message);
     const errorMap = {
       BSONError: "Invalid userId passed",
       CastError: "Invalid userId passed",

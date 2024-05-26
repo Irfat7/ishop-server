@@ -115,7 +115,6 @@ exports.deleteProductFromCart = async (req, res) => {
     }
     res.status(200).send(deletionComplete);
   } catch (error) {
-    console.log(error.message);
     if (error.name === "CastError") {
       return res.status(400).send({
         error: "Invalid id passed",

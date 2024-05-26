@@ -26,7 +26,6 @@ exports.getAllofACategory = async (req, res) => {
     const { products: allProducts } = populatedCategory;
     res.status(200).send(allProducts);
   } catch (error) {
-    console.log(error);
     res.status(500).send("Internal Server Error");
   }
 };

@@ -40,9 +40,6 @@ const reviewsSchema = mongoose.Schema({
 reviewsSchema.pre("save", async function (next) {
   try {
     const Reviews = this.constructor;
-    console.log("orderId:", this.orderId);
-    console.log("userId:", this.userId);
-    console.log("productId:", this.productId);
 
     //valid order check
     const validOrder = await Orders.findOne({
@@ -70,7 +67,6 @@ reviewsSchema.pre("save", async function (next) {
       productId: this.productId,
     });
     if (alreadyReviewed) {
-      console.log("alreadyReviewed");
       await updateUserReviewList(this.userId, alreadyReviewed._id);
       await updateProductReviewList(this.productId, alreadyReviewed._id);
       await updateReviewStatus(this.orderId, this.productId);

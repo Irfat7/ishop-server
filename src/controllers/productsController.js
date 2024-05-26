@@ -18,7 +18,6 @@ exports.createProduct = async (req, res) => {
     await newProduct.save();
     res.status(200).send(newProduct);
   } catch (error) {
-    console.log(error.message);
     if (error.name === "ValidationError" || error.name === "CastError") {
       return res.status(400).send({
         error: "Invalid product information",

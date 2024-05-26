@@ -6,8 +6,6 @@ const authenticateToken = (req, res, next) => {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (token == null) {
-    console.log(authHeader);
-    console.log(token);
     return res.status(401).send({ error: "unauthorized access", logOut: true });
   }
 

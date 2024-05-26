@@ -31,7 +31,6 @@ exports.createAnOrder = async (req, res) => {
 
     res.status(200).send(newOrder);
   } catch (error) {
-    console.log(error.message);
     if (
       error.name === "ValidationError" ||
       error.name === "CastError" ||
@@ -237,10 +236,8 @@ exports.getAllOrders = async (req, res) => {
     ])
       .skip(skipPage)
       .limit(pageSize);
-    console.log(orders);
     res.status(200).send(orders);
   } catch (error) {
-    console.log(error.message);
     res.status(500).send({ error: "Internal server error" });
   }
 };
@@ -389,7 +386,6 @@ exports.getOrdersByLastDigit = async (req, res) => {
 
     return res.status(200).send(result);
   } catch (error) {
-    console.log(error.message);
     res.status(500).send({ error: "Internal Server Error" });
   }
 };
@@ -423,7 +419,6 @@ exports.getMostPopularProducts = async (req, res) => {
     ]).limit(20);
     res.status(200).send(popularProducts);
   } catch (error) {
-    console.log(error.message);
     res.status(500).send({ error: "Internal Server Error" });
   }
 };
