@@ -15,7 +15,7 @@ exports.getAllofACategory = async (req, res) => {
     const limit = 3;
     const skip = (page - 1) * limit;
 
-    const populatedCategory = await await categoryExists.populate({
+    const populatedCategory = await categoryExists.populate({
       path: "products",
       options: {
         skip,

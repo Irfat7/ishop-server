@@ -28,7 +28,6 @@ router.get(
   authenticateToken,
   usersController.getUserId
 );
-//problem here
 router.post("/users", authenticateToken, usersController.createNewUser);
 router.patch(
   "/users/change-role",
